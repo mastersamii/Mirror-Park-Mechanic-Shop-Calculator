@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mirror Park Mechanic Order Calculator</title>
+  <title>Mirror Park Mechanic Repair Calculator</title>
   <style>
     :root{
       /* Grey + soft orange */
@@ -75,12 +75,6 @@
     .discount{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
     .discount input[type="range"]{width:100%}
     .kbd{font-family:ui-monospace,Menlo,Consolas,monospace;background:transparent;border:2px solid var(--accent);color:var(--accent);border-radius:8px;padding:4px 8px;font-weight:800}
-
-    /* Craft dialog */
-    dialog#craftModal{width:min(560px,92vw);background:var(--panel);color:var(--ink);border:1px solid var(--border);border-radius:16px;padding:0;box-shadow:var(--shadow)}
-    dialog#craftModal::backdrop{background:rgba(0,0,0,.5)}
-    .modal-header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border)}
-    .modal-body{padding:16px}
   </style>
 </head>
 <body>
@@ -176,7 +170,10 @@
 
           <!-- MATERIALS TAB -->
           <div id="tab-ingredients" role="tabpanel" hidden>
-            <div class="small muted" style="margin-bottom:6px;">Auto-aggregated from your cart: Door/Hood/Trunk→Scrap · Window→Glass · Tire→Rubber. Advanced Repair Kit expands to parts.</div>
+            <div class="small muted" style="margin-bottom:6px;">
+              Auto-aggregated: Door/Hood/Trunk→Scrap · Window→Glass · Tire→Rubber. 
+              <strong>Repair Kit expands to 2 Aluminum, 2 Scrap, 2 Glass, 4 Rubber.</strong>
+            </div>
             <div id="ingredientList" class="order-card" style="padding:12px;">
               <div class="muted">No items yet.</div>
             </div>
@@ -190,32 +187,16 @@
     </div>
   </div>
 
-  <!-- Crafting modal (Advanced Repair Kit) -->
-  <dialog id="craftModal">
-    <div class="modal-header">
-      <strong id="craftTitle">Craft Advanced Repair Kit</strong>
-      <button class="btn" id="craftClose" aria-label="Close">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="small muted" style="margin-bottom:8px;">Requires:</div>
-      <div id="craftList" style="display:grid;grid-template-columns:1fr auto;gap:8px;"></div>
-      <div class="toolrow" style="justify-content:flex-end;margin-top:12px;">
-        <button class="btn ghost" id="craftCancel">Cancel</button>
-        <button class="btn primary" id="craftConfirm">Add to Cart</button>
-      </div>
-    </div>
-  </dialog>
-
   <script>
     // ---------- Data ----------
-    // Pricing and recipes
+    // Pricing and recipes per your rules
     const MENU = {
       damage: [
         { id:'dm-window', name:'💥Window', price:40,  type:'damage', recipe:{'Glass':1} },
         { id:'dm-door',   name:'🚪Door',   price:75,  type:'damage', recipe:{'Scrap':1} },
-        { id:'dm-hood',   name:'🚪Hood',   price:75,  type:'damage', recipe:{'Scrap':1} },
-        { id:'dm-trunk',  name:'🚪Trunk',  price:75,  type:'damage', recipe:{'Scrap':1} },
-        { id:'dm-tire',   name:'🛞Tire',   price:25,  type:'damage', recipe:{'Rubber':1} },
+        { id:'dm-hood',   name:'🛡️Hood',  price:75,  type:'damage', recipe:{'Scrap':1} },
+        { id:'dm-trunk',  name:'📦Trunk',  price:75,  type:'damage', recipe:{'Scrap':1} },
+        { id:'dm-tire',   name:'⚫Tire',   price:25,  type:'damage', recipe:{'Rubber':1} },
       ],
       materials: [
         { id:'mat-glass',   name:'💎Glass',      price:40,  type:'material', recipe:{'Glass':1} },
@@ -223,15 +204,13 @@
         { id:'mat-alum',    name:'🧱Aluminum',   price:100, type:'material', recipe:{'Aluminum':1} },
         { id:'mat-steel',   name:'🔧Steel',      price:125, type:'material', recipe:{'Steel':1} },
         { id:'mat-rubber',  name:'🧽Rubber',     price:25,  type:'material', recipe:{'Rubber':1} },
-        { id:'shop-repair', name:'🧰Repair Kit', price:600, type:'material', recipe:{'Repair Kit':1} },
-        // Single (not duplicated): Advanced kit crafted from parts
-        { id:'shop-advkit', name:'⚡ Advanced Repair Kit (crafted)', price:530, type:'material',
+        { id:'shop-repair', name:'🧰Repair Kit', price:600, type:'material',
           recipe:{'Aluminum':2,'Scrap':2,'Glass':2,'Rubber':4} },
         { id:'shop-oil',    name:'🛢️Motor Oil',  price:500, type:'material', recipe:{'Motor Oil':1} },
       ]
     };
 
-    // RECIPE_MAP
+    // Build RECIPE_MAP for the ingredients tab
     const RECIPE_MAP = Object.fromEntries(
       [...MENU.damage, ...MENU.materials].map(x => [x.id, x.recipe||{}])
     );
@@ -239,8 +218,8 @@
     const currency = n => `$${n.toFixed(2)}`;
 
     // ---------- State ----------
-    const STATE_KEY = 'mpm_state_orangegrey_v2';
-    const HIST_KEY  = 'mpm_history_orangegrey_v2';
+    const STATE_KEY = 'mpm_state_orangegrey_v3';
+    const HIST_KEY  = 'mpm_history_orangegrey_v3';
     const state = { cart:[], discountPct:0, history:[] };
 
     try{
@@ -290,43 +269,10 @@
         const addId = card.querySelector('[data-add]').getAttribute('data-add');
         const item = all.find(i=>i.id===addId);
         card.querySelector('[data-add]').addEventListener('click',()=>{
-          // If Advanced Repair Kit, open craft popup first
-          if(item.id==='shop-advkit'){
-            openCraftModal(item, count);
-          }else{
-            addToCart({ id:item.id, name:item.name, unitPrice:item.price, qty:count, type:item.type });
-          }
+          addToCart({ id:item.id, name:item.name, unitPrice:item.price, qty:count, type:item.type });
         });
       });
     }
-
-    // ---------- Crafting modal logic ----------
-    const craftModal = document.getElementById('craftModal');
-    const craftTitle = document.getElementById('craftTitle');
-    const craftList  = document.getElementById('craftList');
-    const craftClose = document.getElementById('craftClose');
-    const craftCancel= document.getElementById('craftCancel');
-    const craftConfirm=document.getElementById('craftConfirm');
-    let craftPending = null;
-
-    function openCraftModal(item, qty){
-      craftPending = { item, qty };
-      craftTitle.textContent = 'Craft ' + item.name.replace(/^⚡\s*/,'');
-      const rec = RECIPE_MAP[item.id]||{};
-      craftList.innerHTML = Object.entries(rec).map(([mat, c])=>`
-        <div>${mat}</div><div><strong>x${c * qty}</strong></div>
-      `).join('');
-      craftModal.showModal();
-    }
-    function closeCraft(){ craftModal.close(); craftPending=null; }
-    craftClose.addEventListener('click', closeCraft);
-    craftCancel.addEventListener('click', closeCraft);
-    craftConfirm.addEventListener('click', ()=>{
-      if(!craftPending) return closeCraft();
-      const {item, qty} = craftPending;
-      addToCart({ id:item.id, name:item.name, unitPrice:item.price, qty:qty, type:item.type });
-      closeCraft();
-    });
 
     // ---------- Cart ----------
     function renderCart(){
