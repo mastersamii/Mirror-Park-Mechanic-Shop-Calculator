@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mirror Park Mechanic — Order Calculator</title>
+  <title>Mirror Park Mechanic Order Calculator</title>
   <style>
     :root{
-      /* Grey + soft orange (not too bright) */
+      /* Grey + soft orange */
       --ink:#111418;                /* text */
       --muted:#6b7280;              /* subtle text */
       --bg:#f5f6f8;                 /* page bg */
@@ -83,8 +83,8 @@
       <div class="brand">
         <div class="logo" aria-hidden="true">🛠️</div>
         <div>
-          <h1>Mirror Park Mechanic — Order Calculator</h1>
-          <div class="muted">1 window = 1 glass · Hood & trunk = door category (scrap). Soft orange/grey theme.</div>
+          <h1>Mirror Park Mechanic Order Calculator</h1>
+          <div class="muted">Pick parts, add deals & sides, apply discounts, and get an exact total.</div>
         </div>
       </div>
       <div class="toolrow">
@@ -189,23 +189,23 @@
     // Pricing and recipes per your rules
     const MENU = {
       damage: [
-        { id:'dm-window', name:'Window', price:40,  type:'damage', recipe:{'Glass':1} },
-        { id:'dm-door',   name:'Door',   price:75,  type:'damage', recipe:{'Scrap':1} },
-        { id:'dm-hood',   name:'Hood',   price:75,  type:'damage', recipe:{'Scrap':1} },
-        { id:'dm-trunk',  name:'Trunk',  price:75,  type:'damage', recipe:{'Scrap':1} },
-        { id:'dm-tire',   name:'Tire',   price:25,  type:'damage', recipe:{'Rubber':1} },
+        { id:'dm-window', name:'💥Window', price:40,  type:'damage', recipe:{'Glass':1} },
+        { id:'dm-door',   name:'🚪Door',   price:75,  type:'damage', recipe:{'Scrap':1} },
+        { id:'dm-hood',   name:'🚪Hood',   price:75,  type:'damage', recipe:{'Scrap':1} },
+        { id:'dm-trunk',  name:'🚪Trunk',  price:75,  type:'damage', recipe:{'Scrap':1} },
+        { id:'dm-tire',   name:'⚙️Tire',   price:25,  type:'damage', recipe:{'Rubber':1} },
       ],
       materials: [
-        { id:'mat-glass',   name:'Glass',      price:40,  type:'material', recipe:{'Glass':1} },
-        { id:'mat-scrap',   name:'Scrap',      price:75,  type:'material', recipe:{'Scrap':1} },
-        { id:'mat-alum',    name:'Aluminum',   price:100, type:'material', recipe:{'Aluminum':1} },
-        { id:'mat-steel',   name:'Steel',      price:125, type:'material', recipe:{'Steel':1} },
-        { id:'mat-rubber',  name:'Rubber',     price:25,  type:'material', recipe:{'Rubber':1} },
-        { id:'shop-repair', name:'Repair Kit', price:600, type:'material', recipe:{'Repair Kit':1} },
+        { id:'mat-glass',   name:'💎Glass',      price:40,  type:'material', recipe:{'Glass':1} },
+        { id:'mat-scrap',   name:'🔩Scrap',      price:75,  type:'material', recipe:{'Scrap':1} },
+        { id:'mat-alum',    name:'🧱Aluminum',   price:100, type:'material', recipe:{'Aluminum':1} },
+        { id:'mat-steel',   name:'🔧Steel',      price:125, type:'material', recipe:{'Steel':1} },
+        { id:'mat-rubber',  name:'🧽Rubber',     price:25,  type:'material', recipe:{'Rubber':1} },
+        { id:'shop-repair', name:'🧰Repair Kit', price:600, type:'material', recipe:{'Repair Kit':1} },
         // Advanced kit is crafted from parts; price shown equals materials cost
         { id:'shop-advkit', name:'Advanced Repair Kit (crafted)', price:530, type:'material',
           recipe:{'Aluminum':2,'Scrap':2,'Glass':2,'Rubber':4} },
-        { id:'shop-oil',    name:'Motor Oil',  price:500, type:'material', recipe:{'Motor Oil':1} },
+        { id:'shop-oil',    name:'🛢️Motor Oil',  price:500, type:'material', recipe:{'Motor Oil':1} },
       ]
     };
 
