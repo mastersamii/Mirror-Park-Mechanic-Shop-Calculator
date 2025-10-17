@@ -1,244 +1,420 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Mirror Park Mechanic — Quick Calculator</title>
-<style>
-  :root{
-    --ink:#1e232a; --muted:#6b7280; --accent:#2563eb;
-    --bg:#f5f7fb; --panel:#ffffff; --chip:#f2f4f8; --border:#dde3ee; --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.08);
-    --bg-dark:#0f141b; --panel-dark:#151b24; --chip-dark:#1b2330; --text-dark:#e7edf7; --border-dark:#273245;
-  }
-  [data-theme="dark"]{ --bg:var(--bg-dark); --panel:var(--panel-dark); --chip:var(--chip-dark); --ink:var(--text-dark); --muted:#9aa8bf; --border:var(--border-dark); }
-  *{box-sizing:border-box}
-  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial}
-  h1,h2{margin:0}
-  .container{max-width:1200px;margin:28px auto;padding:0 16px}
-  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
-  .brand{display:flex;align-items:center;gap:12px}
-  .logo{width:44px;height:44px;border-radius:12px;box-shadow:var(--shadow);display:grid;place-items:center;background:conic-gradient(from 0deg,#fff 0 35%,#9cc2ff 0 70%,#2563eb 0 100%)}
-  .toolrow{display:flex;gap:10px;flex-wrap:wrap}
-  .btn{padding:10px 14px;border:1px solid var(--border);border-radius:12px;background:var(--chip);color:inherit;font-weight:600;cursor:pointer}
-  .btn.primary{background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;border:none}
-  .btn.ghost{background:transparent}
-  .chip{padding:6px 10px;border-radius:999px;background:var(--chip);border:1px solid var(--border);color:var(--muted);font-weight:700;font-size:.85rem}
-  .grid{display:grid;grid-template-columns:1fr 1fr .9fr;gap:16px}
-  @media (max-width:980px){.grid{grid-template-columns:1fr}}
-  .panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
-  .panel h2{padding:12px 14px;border-bottom:1px solid var(--border);font-size:1rem}
-  .content{padding:12px}
-  .row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:10px;border-bottom:1px dashed var(--border)}
-  .row:last-child{border-bottom:none}
-  .muted{color:var(--muted);font-size:.9rem}
-  .qty{display:grid;grid-template-columns:32px 40px 32px;gap:6px;align-items:center}
-  .qty button{height:32px;border-radius:8px;border:1px solid var(--border);background:var(--chip);cursor:pointer}
-  .qty input{width:40px;text-align:center;padding:6px;border:1px solid var(--border);border-radius:8px;background:transparent;color:inherit}
-  .totals{display:flex;flex-direction:column;gap:10px}
-  .tot{display:flex;justify-content:space-between;align-items:center}
-  .big{font-weight:900;font-size:1.25rem}
-  .footnote{padding:10px 12px;border-top:1px solid var(--border);font-size:.9rem;color:var(--muted)}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mirror Park Mechanic Order Calculator</title>
+  <style>
+    :root{
+      --brown:#334155; --tan:#e2e8f0; --cream:#f8fafc; --ink:#0f172a; --muted:#6b7280;
+      --border:#e5e7eb; --shadow:0 10px 30px rgba(0,0,0,.08);
+      --bg:#f6f7fb; --panel:#ffffff; --card:#ffffff; --chip:#f3f4f6; --text:var(--ink); --accent:#2563eb; --radius:16px;
+      --bg-dark:#0b1220; --panel-dark:#121827; --card-dark:#141c2e; --chip-dark:#1a2337; --text-dark:#e6edf8; --border-dark:#243049;
+    }
+    [data-theme="dark"]{
+      --bg:var(--bg-dark); --panel:var(--panel-dark); --card:var(--card-dark);
+      --chip:var(--chip-dark); --text:var(--text-dark); --border:var(--border-dark); --accent:#4f86ff;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Arial}
+    h1,h2,h3{margin:0}
+    .container{max-width:1200px;margin:32px auto;padding:0 16px}
+    header{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand .logo{width:48px;height:48px;border-radius:12px;box-shadow:var(--shadow);display:grid;place-items:center;background:linear-gradient(135deg,#60a5fa,#1e40af); color:#fff; font-size:22px}
+    .brand h1{font-size:1.4rem;letter-spacing:.2px}
+    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:20px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+    .panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius)}
+    .panel h2{padding:16px 18px;border-bottom:1px solid var(--border);font-size:1rem}
+    .content{padding:16px}
+    .section{margin-bottom:16px}
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px}
+    .card h3{font-size:1rem}
+    .price{color:var(--accent);font-weight:800}
+    .muted{color:var(--muted);font-size:.9rem}
+    .qty{display:grid;grid-template-columns:32px 1fr 32px;align-items:center;gap:8px;margin-top:6px}
+    .qty button{height:36px;border-radius:10px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer;font-size:18px}
+    .qty output{text-align:center}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--chip);color:var(--text);cursor:pointer;font-weight:600;text-decoration:none}
+    .btn.primary{background:linear-gradient(135deg,#1d4ed8,#3b82f6);border:none;color:#fff}
+    .btn.block{width:100%}
+    .btn.ghost{background:transparent}
+    .toolrow{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .chip{padding:6px 10px;border-radius:999px;background:var(--chip);border:1px solid var(--border);color:var(--muted);font-weight:700;font-size:.85rem}
+    .divider{height:1px;background:var(--border);margin:8px 0}
+    .order-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:6px}
+    .cart-item{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:8px;border-bottom:1px dashed var(--border)}
+    .cart-item:last-child{border-bottom:none}
+    .small{font-size:.85rem;color:var(--muted)}
+    .tabs{display:flex;gap:8px;margin-bottom:10px}
+    .tabs .btn[aria-selected="true"]{outline:2px solid var(--accent)}
+    .summary{display:flex;flex-direction:column;gap:14px}
+    .summary .row{display:flex;justify-content:space-between;align-items:center}
+    .summary .row.total{font-size:1.2rem;font-weight:800}
+    .discount{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+    .discount input[type="range"]{width:100%}
+    .kbd{font-family:ui-monospace,Menlo,Consolas,monospace;background:transparent;border:2px solid var(--accent);color:var(--accent);border-radius:8px;padding:4px 8px;font-weight:800}
+  </style>
 </head>
 <body>
-<div class="container">
-  <header>
-    <div class="brand">
-      <div class="logo">🔧</div>
-      <div>
-        <h1>Mirror Park Mechanic — Calculator</h1>
-        <div class="muted">Fast totals for common repairs. 1 window = 1 glass. Hood & trunk count as a door.</div>
-      </div>
-    </div>
-    <div class="toolrow">
-      <span class="chip">Autosaves</span>
-      <button class="btn ghost" id="themeBtn" aria-pressed="false">🌙 Dark</button>
-      <button class="btn ghost" id="resetBtn">Clear</button>
-      <button class="btn primary" id="shareBtn">Copy Summary</button>
-    </div>
-  </header>
-
-  <div class="grid">
-    <!-- Vehicle damage -->
-    <section class="panel">
-      <h2>Vehicle Damage</h2>
-      <div class="content" id="damageList">
-        <!-- rows injected -->
-      </div>
-      <div class="footnote">Tip: Doors includes <strong>hood</strong> and <strong>trunk</strong>.</div>
-    </section>
-
-    <!-- Materials / shop items -->
-    <section class="panel">
-      <h2>Materials & Shop Items</h2>
-      <div class="content" id="materialList">
-        <!-- rows injected -->
-      </div>
-    </section>
-
-    <!-- Summary -->
-    <aside class="panel">
-      <h2>Summary</h2>
-      <div class="content">
-        <div id="cartLines" class="muted" style="margin-bottom:8px">No items yet.</div>
-        <div class="totals">
-          <div class="tot"><span>Subtotal</span><strong id="sub">$0.00</strong></div>
-          <div class="tot big"><span>Total</span><strong id="tot">$0.00</strong></div>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">🔧</div>
+        <div>
+          <h1>Mirror Park Mechanic Order Calculator</h1>
+          <div class="muted">Same layout as your other calculators. 1 window = 1 glass. Hood & trunk count as a door.</div>
         </div>
       </div>
-      <div class="footnote" id="notes"></div>
-    </aside>
-  </div>
-</div>
-
-<script>
-/* ------- Prices (from your sheet) ------- */
-const PRICES = {
-  Glass:40,
-  Scrap:75,
-  Aluminum:100,
-  Steel:125,
-  Door:75,
-  Tires:25,
-  'Repair Kit':600,
-  'Motor Oil':500
-};
-
-/* ------- Mappings / UI rows ------- */
-/* Vehicle damage rows are “logical counts” that map to billable materials */
-const DAMAGE_ROWS = [
-  { id:'win',  label:'Windows', unit:'each',     mapTo:'Glass',      price:PRICES.Glass },
-  { id:'door', label:'Doors (incl. hood & trunk)', unit:'each', mapTo:'Door',       price:PRICES.Door },
-  { id:'hood', label:'Hood',   unit:'each',      mapTo:'Door',       price:PRICES.Door },   // counts as Door
-  { id:'trunk',label:'Trunk',  unit:'each',      mapTo:'Door',       price:PRICES.Door },   // counts as Door
-  { id:'tire', label:'Tires',  unit:'each',      mapTo:'Tires',      price:PRICES.Tires },
-];
-
-/* Materials that can be sold directly (besides the above mappings) */
-const MATERIAL_ROWS = [
-  { id:'mat-scrap', label:'Scrap',      price:PRICES.Scrap },
-  { id:'mat-al',    label:'Aluminum',   price:PRICES.Aluminum },
-  { id:'mat-steel', label:'Steel',      price:PRICES.Steel },
-  { id:'shop-rk',   label:'Repair Kit', price:PRICES['Repair Kit'] },
-  { id:'shop-oil',  label:'Motor Oil',  price:PRICES['Motor Oil'] },
-];
-
-/* ------- State / persist ------- */
-const KEY='mpm_calc_v1';
-const state={ qty:{} };
-try{ Object.assign(state, JSON.parse(localStorage.getItem(KEY)||'{}')); }catch{}
-const save=()=>localStorage.setItem(KEY, JSON.stringify(state));
-
-/* ------- Helpers ------- */
-const currency = n => '$'+n.toFixed(2);
-function setQty(id, val){ state.qty[id]=Math.max(0, Number(val)||0); save(); render(); }
-function qty(id){ return Math.max(0, Number(state.qty[id]||0)); }
-
-/* ------- Render rows ------- */
-function rowHTML(r, current){
-  return `<div class="row">
-    <div><strong>${r.label}</strong>${r.unit?` <span class="muted">(${r.unit})</span>`:''}</div>
-    <div class="muted">${currency(r.price)} each</div>
-    <div class="qty">
-      <button data-dec="${r.id}">−</button>
-      <input inputmode="numeric" value="${current}"/>
-      <button data-inc="${r.id}">+</button>
-    </div>
-  </div>`;
-}
-function bindQty(container){
-  container.querySelectorAll('[data-inc]').forEach(b=>{
-    b.addEventListener('click',()=>{ const id=b.getAttribute('data-inc'); setQty(id, qty(id)+1); });
-  });
-  container.querySelectorAll('[data-dec]').forEach(b=>{
-    b.addEventListener('click',()=>{ const id=b.getAttribute('data-dec'); setQty(id, qty(id)-1); });
-  });
-  container.querySelectorAll('.row input').forEach((inp,i)=>{
-    const id = (inp.closest('.row').querySelector('[data-inc]')||{}).getAttribute('data-inc') ||
-               (inp.closest('.row').querySelector('[data-dec]')||{}).getAttribute('data-dec');
-    inp.addEventListener('input',()=> setQty(id, inp.value));
-  });
-}
-
-/* ------- Compute and render summary ------- */
-function computeLines(){
-  const lines = [];
-
-  // From vehicle damage (logical → billable)
-  DAMAGE_ROWS.forEach(r=>{
-    const q=qty(r.id); if(!q) return;
-    lines.push({ name:r.mapTo||r.label, unit:r.price, qty:q });
-  });
-
-  // Materials sold directly
-  MATERIAL_ROWS.forEach(r=>{
-    const q=qty(r.id); if(!q) return;
-    lines.push({ name:r.label, unit:r.price, qty:q });
-  });
-
-  // collapse same-name lines (e.g., Doors + Hood + Trunk → Door)
-  const merged={};
-  lines.forEach(l=>{
-    const k=l.name+'|'+l.unit;
-    if(!merged[k]) merged[k]=Object.assign({}, l);
-    else merged[k].qty += l.qty;
-  });
-  return Object.values(merged);
-}
-
-function render(){
-  // left columns
-  const dWrap=document.getElementById('damageList');
-  dWrap.innerHTML = DAMAGE_ROWS.map(r=>rowHTML(r, qty(r.id))).join('');
-  bindQty(dWrap);
-
-  const mWrap=document.getElementById('materialList');
-  mWrap.innerHTML = MATERIAL_ROWS.map(r=>rowHTML(r, qty(r.id))).join('');
-  bindQty(mWrap);
-
-  // summary
-  const lines=computeLines();
-  const cart=document.getElementById('cartLines');
-  if(!lines.length){ cart.textContent='No items yet.'; }
-  else{
-    cart.innerHTML = lines.map(l=>`
-      <div class="tot" style="margin:4px 0;">
-        <span>${l.qty}× ${l.name}</span>
-        <strong>${currency(l.unit*l.qty)}</strong>
+      <div class="toolrow">
+        <span class="chip">Autosaves</span>
+        <button class="btn ghost" id="themeBtn" aria-pressed="false" title="Toggle dark mode">🌙 Dark</button>
+        <button class="btn ghost" id="resetBtn">Clear All</button>
+        <button class="btn primary" id="checkoutBtn">Checkout</button>
       </div>
-    `).join('');
-  }
-  const sub = lines.reduce((s,l)=>s + l.unit*l.qty, 0);
-  document.getElementById('sub').textContent = currency(sub);
-  document.getElementById('tot').textContent = currency(sub);
+    </header>
 
-  // footnotes
-  document.getElementById('notes').textContent =
-    'Pricing: Glass $40 • Scrap $75 • Aluminum $100 • Steel $125 • Door $75 • Tires $25 • Repair Kit $600 • Motor Oil $500';
-}
+    <div class="flagbar" aria-hidden="true" style="height:10px;border-radius:8px;overflow:hidden;margin-bottom:18px;">
+      <div style="display:flex;height:100%;">
+        <div style="flex:1;background:#a7c4ff"></div>
+        <div style="flex:1;background:#dbe8ff"></div>
+        <div style="flex:1;background:#1d4ed8"></div>
+      </div>
+    </div>
 
-/* ------- Actions ------- */
-document.getElementById('resetBtn').addEventListener('click',()=>{
-  if(!confirm('Clear all counts?')) return;
-  state.qty={}; save(); render();
-});
-document.getElementById('shareBtn').addEventListener('click',()=>{
-  const lines=computeLines();
-  const total=lines.reduce((s,l)=>s+l.unit*l.qty,0);
-  const text = lines.length
-    ? lines.map(l=>`• ${l.qty}× ${l.name} — ${currency(l.unit*l.qty)}`).join('\n') + `\n—\nTotal: ${currency(total)}`
-    : 'No items.';
-  navigator.clipboard.writeText(text).then(()=>alert('Summary copied!'));
-});
+    <div class="grid">
+      <!-- Left: Menu -->
+      <section class="panel">
+        <h2>Menu</h2>
+        <div class="content">
+          <div class="section">
+            <h3 style="margin:0 0 8px 0">Damage to Fix</h3>
+            <div class="cards" id="damage"></div>
+          </div>
 
-/* ------- Theme ------- */
-const themeBtn=document.getElementById('themeBtn');
-function applyTheme(t){ document.documentElement.setAttribute('data-theme',t); localStorage.setItem('mpm_theme',t); themeBtn.textContent = t==='dark'?'☀️ Light':'🌙 Dark'; themeBtn.setAttribute('aria-pressed', t==='dark'); }
-applyTheme(localStorage.getItem('mpm_theme')||'light');
-themeBtn.addEventListener('click',()=>applyTheme((localStorage.getItem('mpm_theme')||'light')==='light'?'dark':'light'));
+          <div class="section">
+            <h3 style="margin:0 0 8px 0">Materials & Shop Items</h3>
+            <div class="cards" id="materials"></div>
+          </div>
+        </div>
+      </section>
 
-/* ------- Init ------- */
-render();
-</script>
+      <!-- Right: Orders -->
+      <aside class="panel">
+        <h2>Orders</h2>
+        <div class="content">
+          <div class="tabs" role="tablist" aria-label="Order panels">
+            <button class="btn" data-tab="summary" aria-selected="true">🧾 Summary</button>
+            <button class="btn" data-tab="history" aria-selected="false">📜 History</button>
+            <button class="btn" data-tab="ingredients" aria-selected="false">🧺 Materials List</button>
+          </div>
+
+          <!-- SUMMARY TAB -->
+          <div id="tab-summary" role="tabpanel">
+            <div id="cart" class="order-card">
+              <div class="cart-item muted">Cart is empty. Add items from the left.</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="discount">
+              <label for="discountRange">Discount</label>
+              <div><span id="discountLabel" class="kbd">0%</span></div>
+              <input id="discountRange" type="range" min="0" max="100" step="5" value="0" />
+            </div>
+
+            <div class="summary" style="margin-top:12px;">
+              <div class="row"><span>Subtotal</span><strong id="subtotal">$0.00</strong></div>
+              <div class="row"><span>Discount</span><strong id="discount">-$0.00</strong></div>
+              <div class="row total"><span>Total</span><strong id="total">$0.00</strong></div>
+            </div>
+
+            <div class="right-actions" style="margin-top:12px;">
+              <button class="btn primary block" id="checkoutBtn2">Checkout</button>
+              <button class="btn ghost block" id="resetBtn2">Clear All</button>
+            </div>
+          </div>
+
+          <!-- HISTORY TAB -->
+          <div id="tab-history" role="tabpanel" hidden>
+            <div class="summary" style="gap:8px; margin-bottom:8px;">
+              <div class="row"><span>Orders served today</span><strong id="ordersToday">0</strong></div>
+              <div class="row"><span>Orders served overall</span><strong id="ordersOverall">0</strong></div>
+            </div>
+            <div id="historyList" class="summary" style="gap:12px;"></div>
+            <div class="right-actions" style="margin-top:12px;">
+              <button class="btn ghost" id="clearHistoryBtn">Clear History</button>
+            </div>
+          </div>
+
+          <!-- MATERIALS TAB -->
+          <div id="tab-ingredients" role="tabpanel" hidden>
+            <div class="small muted" style="margin-bottom:6px;">Auto-aggregated from your cart using the mappings (windows→glass, hood/trunk→door).</div>
+            <div id="ingredientList" class="order-card" style="padding:12px;">
+              <div class="muted">No items yet.</div>
+            </div>
+            <div class="toolrow" style="margin-top:10px;justify-content:flex-end">
+              <button class="btn" id="copyIngBtn">Copy List</button>
+              <button class="btn" id="exportIngBtn">Export CSV</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Data ----------
+    const MENU = {
+      // Damage entries are logical lines priced by the matching material
+      damage: [
+        { id:'dm-window', name:'🚘 Window', price:40,  type:'damage', recipe:{'Glass':1} },
+        { id:'dm-door',   name:'🚪 Door',   price:75,  type:'damage', recipe:{'Door':1} },
+        { id:'dm-hood',   name:'🛡️ Hood',  price:75, type:'damage', recipe:{'Door':1} },
+        { id:'dm-trunk',  name:'📦 Trunk', price:75, type:'damage', recipe:{'Door':1} },
+        { id:'dm-tire',   name:'🛞 Tire',   price:25,  type:'damage', recipe:{'Tires':1} },
+      ],
+      materials: [
+        { id:'mat-scrap',   name:'🔩 Scrap',      price:75,  type:'material', recipe:{'Scrap':1} },
+        { id:'mat-alum',    name:'🧱 Aluminum',   price:100, type:'material', recipe:{'Aluminum':1} },
+        { id:'mat-steel',   name:'🛠️ Steel',     price:125, type:'material', recipe:{'Steel':1} },
+        { id:'shop-repair', name:'🧰 Repair Kit', price:600, type:'material', recipe:{'Repair Kit':1} },
+        { id:'shop-oil',    name:'🛢️ Motor Oil', price:500, type:'material', recipe:{'Motor Oil':1} },
+      ]
+    };
+
+    // For ingredients tab we also allow mapping by ID if needed later
+    const RECIPE_MAP = Object.fromEntries(
+      [...MENU.damage, ...MENU.materials].map(x => [x.id, x.recipe||{}])
+    );
+
+    const currency = n => `$${n.toFixed(2)}`;
+
+    // ---------- State ----------
+    const STATE_KEY = 'mpm_state_v1';
+    const HIST_KEY  = 'mpm_history_v1';
+    const state = { cart:[], discountPct:0, history:[] };
+
+    try{
+      const saved = JSON.parse(localStorage.getItem(STATE_KEY)||'{}');
+      const savedHist = JSON.parse(localStorage.getItem(HIST_KEY)||'[]');
+      if(Array.isArray(savedHist)) state.history = savedHist;
+      if(saved){
+        if(Array.isArray(saved.cart)) state.cart = saved.cart;
+        if(typeof saved.discountPct==='number') state.discountPct = saved.discountPct;
+      }
+    }catch{}
+    const persist = () => localStorage.setItem(STATE_KEY, JSON.stringify(state));
+    const persistHistory = () => localStorage.setItem(HIST_KEY, JSON.stringify(state.history));
+
+    // ---------- Cards ----------
+    function cardHTML(item){
+      return `
+        <article class="card">
+          <h3>${item.name}</h3>
+          <div class="toolrow" style="justify-content:space-between;">
+            <span class="price">${currency(item.price)}</span>
+            <div class="qty">
+              <button aria-label="decrease">−</button>
+              <output>1</output>
+              <button aria-label="increase">+</button>
+            </div>
+          </div>
+          <button class="btn" data-add="${item.id}">Add</button>
+        </article>`;
+    }
+
+    function renderCards(){
+      const damage = document.getElementById('damage');
+      const materials = document.getElementById('materials');
+      const make = arr => arr.map(cardHTML).join('');
+      damage.innerHTML = make(MENU.damage);
+      materials.innerHTML = make(MENU.materials);
+
+      const all = [...MENU.damage, ...MENU.materials];
+      document.querySelectorAll('.cards .card').forEach(card=>{
+        let count=1;
+        const out=card.querySelector('output');
+        card.querySelector('button[aria-label="decrease"]').addEventListener('click',()=>{count=Math.max(1,count-1);out.value=count;});
+        card.querySelector('button[aria-label="increase"]').addEventListener('click',()=>{count++;out.value=count;});
+        const addId = card.querySelector('[data-add]').getAttribute('data-add');
+        const item = all.find(i=>i.id===addId);
+        card.querySelector('[data-add]').addEventListener('click',()=>{
+          addToCart({ id:item.id, name:item.name, unitPrice:item.price, qty:count, type:item.type });
+        });
+      });
+    }
+
+    // ---------- Cart ----------
+    function renderCart(){
+      const cart = document.getElementById('cart');
+      if(!state.cart.length){
+        cart.innerHTML = `<div class="cart-item muted">Cart is empty. Add items from the left.</div>`;
+        return;
+      }
+      cart.innerHTML = state.cart.map((l,idx)=>`
+        <div class="cart-item">
+          <div>
+            <div><strong>${l.name}</strong></div>
+            <div class="small">${currency(l.unitPrice)} each</div>
+          </div>
+          <div class="qty">
+            <button data-dec="${idx}">−</button>
+            <output>${l.qty}</output>
+            <button data-inc="${idx}">+</button>
+          </div>
+          <div><strong>${currency(l.unitPrice*l.qty)}</strong></div>
+        </div>
+      `).join('');
+
+      cart.querySelectorAll('[data-inc]').forEach(b=>b.addEventListener('click',()=>{
+        const i=+b.getAttribute('data-inc'); state.cart[i].qty++; persist(); renderCart(); renderTotals(); renderIngredients();
+      }));
+      cart.querySelectorAll('[data-dec]').forEach(b=>b.addEventListener('click',()=>{
+        const i=+b.getAttribute('data-dec'); state.cart[i].qty--; if(state.cart[i].qty<=0) state.cart.splice(i,1); persist(); renderCart(); renderTotals(); renderIngredients();
+      }));
+    }
+
+    function addToCart(line){
+      const key = `${line.id||line.name}|${line.unitPrice}|${line.type||''}`;
+      const found = state.cart.find(l => `${l.id||l.name}|${l.unitPrice}|${l.type||''}`===key);
+      if(found) found.qty += line.qty; else state.cart.push(line);
+      persist(); renderCart(); renderTotals(); renderIngredients();
+    }
+
+    // ---------- Totals ----------
+    function renderTotals(){
+      const subtotal = state.cart.reduce((s,l)=>s + l.unitPrice*l.qty, 0);
+      const manual = +(subtotal * (state.discountPct/100)).toFixed(2);
+      const total = subtotal - manual;
+
+      document.getElementById('subtotal').textContent = currency(subtotal);
+      document.getElementById('discount').textContent = `-${currency(manual)}`;
+      document.getElementById('total').textContent = currency(total);
+    }
+
+    // ---------- Discount slider ----------
+    const range=document.getElementById('discountRange'); const discountLabel=document.getElementById('discountLabel');
+    function renderDiscount(){ range.value=state.discountPct; discountLabel.textContent = `${state.discountPct}%`; }
+    range.addEventListener('input',()=>{ state.discountPct=+range.value; persist(); renderTotals(); discountLabel.textContent = `${state.discountPct}%`; });
+
+    // ---------- History ----------
+    function ordersServedCounters(){
+      const todayStr=new Date().toDateString();
+      const today=state.history.filter(h=> new Date(h.id).toDateString()===todayStr).length;
+      const overall=state.history.length;
+      document.getElementById('ordersToday').textContent=today;
+      document.getElementById('ordersOverall').textContent=overall;
+    }
+    function renderHistory(){
+      ordersServedCounters();
+      const list=document.getElementById('historyList');
+      if(!state.history.length){ list.innerHTML='<div class="muted">No past orders yet. Checkout to save one.</div>'; return; }
+      list.innerHTML = state.history.map(h=>`
+        <article class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+            <div>
+              <div><strong>${new Date(h.id).toLocaleString()}</strong></div>
+              <div class="small">${h.items.length} item(s) • Discount ${h.discountPct}%</div>
+            </div>
+            <div><strong>${currency(h.total)}</strong></div>
+          </div>
+          <details class="small" style="margin-top:6px;">
+            <summary>View items</summary>
+            <ul style="margin:6px 0 0 16px;">
+              ${h.items.map(i=>`<li>${i.qty}× ${i.name} — ${currency(i.lineTotal)}</li>`).join('')}
+            </ul>
+          </details>
+          <div class="toolrow" style="justify-content:flex-end;">
+            <button class="btn" data-reorder="${h.id}">Reorder</button>
+            <button class="btn ghost" data-delete="${h.id}">Delete</button>
+          </div>
+        </article>
+      `).join('');
+      list.querySelectorAll('[data-reorder]').forEach(btn=>btn.addEventListener('click',()=>{
+        const id=+btn.getAttribute('data-reorder');
+        const h=state.history.find(x=>x.id===id); if(!h) return;
+        h.items.forEach(it => addToCart({ id:it.id||null, name:it.name, unitPrice:it.unit, qty:it.qty, type:it.type||'material' }));
+      }));
+      list.querySelectorAll('[data-delete]').forEach(btn=>btn.addEventListener('click',()=>{
+        const id=+btn.getAttribute('data-delete');
+        state.history = state.history.filter(x=>x.id!==id); persistHistory(); renderHistory();
+      }));
+    }
+    document.getElementById('clearHistoryBtn').addEventListener('click',()=>{ if(confirm('Clear all saved orders?')){ state.history=[]; persistHistory(); renderHistory(); ordersServedCounters(); } });
+
+    // ---------- Tabs ----------
+    const tabButtons=document.querySelectorAll('[data-tab]');
+    function selectTab(which){
+      document.getElementById('tab-summary').hidden = which!=='summary';
+      document.getElementById('tab-history').hidden = which!=='history';
+      document.getElementById('tab-ingredients').hidden = which!=='ingredients';
+      tabButtons.forEach(b=>b.setAttribute('aria-selected', String(b.getAttribute('data-tab')===which)));
+      if(which==='ingredients') renderIngredients();
+      if(which==='history') ordersServedCounters();
+    }
+    tabButtons.forEach(b=>b.addEventListener('click',()=>selectTab(b.getAttribute('data-tab'))));
+
+    // ---------- Materials aggregation ----------
+    function aggregateIngredients(){
+      const tally={};
+      const add=(n,x=1)=>{ if(!n) return; tally[n]=(tally[n]||0)+x; };
+
+      state.cart.forEach(line=>{
+        const rec = RECIPE_MAP[line.id] || {};
+        for(const [ing,c] of Object.entries(rec)) add(ing, c*line.qty);
+      });
+      return tally;
+    }
+    function renderIngredients(){
+      const wrap=document.getElementById('ingredientList');
+      const entries=Object.entries(aggregateIngredients()).sort((a,b)=>a[0].localeCompare(b[0]));
+      if(!entries.length){ wrap.innerHTML='<div class="muted">No items yet.</div>'; return; }
+      wrap.innerHTML = entries.map(([n,c])=>`<div style="display:grid;grid-template-columns:1fr auto;gap:8px;padding:6px 0;border-bottom:1px dashed var(--border)"><div>${n}</div><div><strong>x${c}</strong></div></div>`).join('');
+    }
+    document.getElementById('copyIngBtn')?.addEventListener('click',()=>{
+      const txt=Object.entries(aggregateIngredients()).sort((a,b)=>a[0].localeCompare(b[0])).map(([n,c])=>`- ${n} x${c}`).join('\n');
+      navigator.clipboard.writeText(txt).then(()=>alert('Materials copied!'));
+    });
+    document.getElementById('exportIngBtn')?.addEventListener('click',()=>{
+      const rows=[['Material','Count'],...Object.entries(aggregateIngredients()).sort((a,b)=>a[0].localeCompare(b[0]))];
+      const csv=rows.map(r=> r.map(x=>`"${String(x).replaceAll('"','""')}"`).join(',')).join('\n');
+      const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download='mirrorpark_materials.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    // ---------- Checkout / Reset ----------
+    function checkout(){
+      if(!state.cart.length){ alert('Cart is empty.'); return; }
+      const subtotal=state.cart.reduce((s,l)=>s+l.unitPrice*l.qty,0);
+      const manual=+(subtotal*(state.discountPct/100)).toFixed(2);
+      const total=+(subtotal-manual).toFixed(2);
+      const entry={
+        id:Date.now(),
+        items:state.cart.map(l=>({ id:l.id||null,name:l.name,qty:l.qty,unit:l.unitPrice,type:l.type||'material',lineTotal:+(l.unitPrice*l.qty).toFixed(2) })),
+        discountPct:state.discountPct, subtotal:+subtotal.toFixed(2), total
+      };
+      state.history.unshift(entry); persistHistory();
+      state.cart=[]; state.discountPct=0; persist(); renderAll(); selectTab('summary');
+    }
+    function resetAll(){ state.cart=[]; state.discountPct=0; persist(); renderAll(); renderIngredients(); }
+
+    document.getElementById('checkoutBtn').addEventListener('click',checkout);
+    document.getElementById('checkoutBtn2').addEventListener('click',checkout);
+    document.getElementById('resetBtn').addEventListener('click',resetAll);
+    document.getElementById('resetBtn2').addEventListener('click',resetAll);
+
+    // ---------- Theme ----------
+    const themeBtn=document.getElementById('themeBtn');
+    function applyTheme(t){ document.documentElement.setAttribute('data-theme',t); localStorage.setItem('mpm_theme',t); themeBtn.textContent=t==='dark'?'☀️ Light':'🌙 Dark'; themeBtn.setAttribute('aria-pressed',t==='dark'); }
+    applyTheme(localStorage.getItem('mpm_theme')||'light');
+    themeBtn.addEventListener('click',()=>{ const next=(localStorage.getItem('mpm_theme')||'light')==='light'?'dark':'light'; applyTheme(next); });
+
+    // ---------- Init ----------
+    function renderAll(){ renderCards(); renderCart(); renderTotals(); renderDiscount(); renderHistory(); }
+    renderAll();
+  </script>
 </body>
 </html>
