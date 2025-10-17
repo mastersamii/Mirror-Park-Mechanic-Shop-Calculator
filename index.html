@@ -6,41 +6,53 @@
   <title>Mirror Park Mechanic Shop Order Calculator</title>
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Russo+One&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@600;800&display=swap" rel="stylesheet"/>
 
   <style>
     :root{
-      /* GREY + ORANGE THEME */
-      --ink:#0f1115;           /* deep grey/black text */
-      --muted:#6b7280;         /* soft grey */
-      --bg:#0f1115;            /* page background (dark slate) */
-      --panel:#151923;         /* panel background */
-      --card:#1a1f2b;          /* card background */
-      --chip:#1e2533;          /* chip/button bg */
-      --border:#2a3245;        /* borders */
-      --accent:#f97316;        /* orange primary */
-      --accent-2:#fb923c;      /* lighter orange */
+      /* LIGHT THEME (default) */
+      --ink:#0f1115;
+      --ink-soft:#1f2937;
+      --muted:#6b7280;
+      --bg:#f6f7f9;
+      --panel:#ffffff;
+      --card:#ffffff;
+      --chip:#f1f5f9;
+      --border:#e5e7eb;
+      --accent:#f97316;   /* orange */
+      --accent-2:#fb923c; /* light orange */
       --radius:16px;
+      --shadow:0 14px 40px rgba(0,0,0,.08);
+    }
+    [data-theme="dark"]{
+      --ink:#eef2ff;
+      --ink-soft:#cbd5e1;
+      --muted:#9aa3b4;
+      --bg:#0f1115;
+      --panel:#151923;
+      --card:#1a1f2b;
+      --chip:#1e2533;
+      --border:#2a3245;
+      --accent:#f97316;
+      --accent-2:#fb923c;
       --shadow:0 14px 40px rgba(0,0,0,.25);
     }
+
     *{box-sizing:border-box}
-    html,body{margin:0;background:var(--bg);color:#eef2ff;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Arial}
-    h1,h2,h3{margin:0}
-    .titleFont{font-family:"Russo One", Impact, system-ui, sans-serif; letter-spacing:.5px}
+    html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Arial}
+    h1,h2,h3{margin:0;color:var(--ink)}
+    .titleFont{font-family:"Outfit", system-ui, sans-serif; letter-spacing:.3px}
 
     .container{max-width:1200px;margin:28px auto;padding:0 16px}
     header{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:18px}
     .brand{display:flex;align-items:center;gap:14px}
     .brand .logo{
       width:56px;height:56px;border-radius:14px;box-shadow:var(--shadow);
-      background:conic-gradient(from 210deg, #ffedd5 0 15%, var(--accent) 15% 55%, #111827 55% 100%);
+      background:conic-gradient(from 210deg, #ffe6d0 0 15%, var(--accent) 15% 55%, #111827 55% 100%);
       display:grid;place-items:center;font-size:26px;color:#111827;position:relative;
     }
-    .brand .logo::after{
-      content:"🛠️"; position:absolute; transform:translateY(-1px);
-      filter: drop-shadow(0 2px 2px rgba(0,0,0,.35));
-    }
-    .brand h1{font-size:1.55rem}
+    .brand .logo::after{content:"🛠️"; position:absolute; transform:translateY(-1px)}
+    .brand h1{font-size:1.6rem}
     .brand .sub{color:var(--accent-2); font-weight:600; margin-top:2px}
 
     .flagbar{height:10px;border-radius:10px;overflow:hidden}
@@ -56,57 +68,61 @@
     .panel h2{padding:14px 16px;border-bottom:1px solid var(--border);font-size:1rem}
     .content{padding:16px}
     .section{margin-bottom:16px}
-    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
     .card{
       background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px;
-      display:flex; flex-direction:column; gap:8px; box-shadow: 0 0 0 1px rgba(249,115,22,0) inset;
+      display:flex; flex-direction:column; gap:8px;
     }
-    .card h3{font-size:1rem}
+    .card h3{font-size:1.02rem; font-family:"Outfit",system-ui,sans-serif}
     .price{color:var(--accent);font-weight:800}
-    .muted{color:#a3a9b9; font-size:.92rem}
+    .muted{color:var(--muted); font-size:.92rem}
     .qty{display:grid;grid-template-columns:32px 1fr 32px;align-items:center;gap:8px;margin-top:6px}
     .qty button{
       height:36px;border-radius:10px;border:1px solid var(--border);
-      background:linear-gradient(180deg,var(--chip),#161c27); color:#e5e7eb; cursor:pointer; font-size:18px
+      background:var(--chip); color:var(--ink); cursor:pointer; font-size:18px
     }
     .qty output{text-align:center}
     .btn{
       display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:12px;
-      border:1px solid var(--border);background:linear-gradient(180deg,var(--chip),#161c27);
-      color:#e5e7eb;cursor:pointer;font-weight:700;text-decoration:none; letter-spacing:.2px
+      border:1px solid var(--border);background:var(--chip);
+      color:var(--ink);cursor:pointer;font-weight:700;text-decoration:none; letter-spacing:.2px
     }
     .btn:hover{box-shadow:0 0 0 1px var(--accent) inset}
-    .btn.primary{
-      background:linear-gradient(135deg,var(--accent),var(--accent-2)); border:none; color:#111827
-    }
+    .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2)); border:none; color:#111827}
     .btn.block{width:100%}
     .btn.ghost{background:transparent}
 
+    select, .optrow{
+      width:100%; background:var(--chip); color:var(--ink); border:1px solid var(--border);
+      border-radius:10px; padding:8px; font-weight:600
+    }
+    .optrow{display:grid;grid-template-columns:1fr; gap:8px}
+
     .toolrow{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
     .chip{
-      padding:6px 10px;border-radius:999px;background:#111827;border:1px solid var(--border);
-      color:#cbd5e1;font-weight:800;font-size:.8rem
+      padding:6px 10px;border-radius:999px;background:var(--chip);border:1px solid var(--border);
+      color:var(--ink-soft);font-weight:800;font-size:.8rem
     }
     .divider{height:1px;background:var(--border);margin:8px 0}
     .order-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:6px}
     .cart-item{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:8px;border-bottom:1px dashed var(--border)}
     .cart-item:last-child{border-bottom:none}
-    .small{font-size:.85rem;color:#9aa3b4}
+    .small{font-size:.85rem;color:var(--muted)}
     .tabs{display:flex;gap:8px;margin-bottom:10px}
     .tabs .btn[aria-selected="true"]{outline:2px solid var(--accent)}
     .summary{display:flex;flex-direction:column;gap:14px}
     .summary .row{display:flex;justify-content:space-between;align-items:center}
-    .summary .row.total{font-size:1.2rem;font-weight:800;color:#fff}
+    .summary .row.total{font-size:1.2rem;font-weight:800;color:var(--ink)}
     .discount{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
     .discount input[type="range"]{width:100%}
     .kbd{
-      font-family:ui-monospace,Menlo,Consolas,monospace;background:#111827;border:2px solid var(--accent);
+      font-family:ui-monospace,Menlo,Consolas,monospace;background:transparent;border:2px solid var(--accent);
       color:var(--accent);border-radius:8px;padding:4px 8px;font-weight:800
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" id="root">
     <header>
       <div class="brand">
         <div class="logo" aria-hidden="true"></div>
@@ -117,16 +133,14 @@
       </div>
       <div class="toolrow">
         <span class="chip">Autosaves</span>
-        <button class="btn ghost" id="themeBtn" aria-pressed="false" title="Toggle theme">🌓 Toggle</button>
+        <button class="btn ghost" id="themeBtn" aria-pressed="false" title="Toggle light/dark">🌓 Theme</button>
         <button class="btn ghost" id="resetBtn">♻️ Clear All</button>
         <button class="btn primary" id="checkoutBtn">💳 Checkout</button>
       </div>
     </header>
 
     <div class="flagbar" aria-hidden="true">
-      <div>
-        <div class="o1"></div><div class="o2"></div><div class="o3"></div>
-      </div>
+      <div><div class="o1"></div><div class="o2"></div><div class="o3"></div></div>
     </div>
 
     <div class="grid">
@@ -196,7 +210,7 @@
 
           <!-- MATERIALS TAB -->
           <div id="tab-ingredients" role="tabpanel" hidden>
-            <div class="small" style="margin-bottom:6px;">Auto-aggregated from your cart.</div>
+            <div class="small" style="margin-bottom:6px;">Auto-aggregated from your cart (based on repair method you choose on each item).</div>
             <div id="ingredientList" class="order-card" style="padding:12px;">
               <div class="muted">No items yet.</div>
             </div>
@@ -212,31 +226,70 @@
 
   <script>
     // ---------- Data ----------
+    // Each damage item has a 'variants' object to decide how it's repaired.
     const MENU = {
       damage: [
-        { id:'dm-window', name:'🚘 Window', price:40,  type:'damage', recipe:{'Glass':1} },
-        { id:'dm-door',   name:'🚪 Door',   price:75,  type:'damage', recipe:{'Door':1} },
-        { id:'dm-hood',   name:'🛡️ Hood',  price:75, type:'damage', recipe:{'Door':1} },
-        { id:'dm-trunk',  name:'📦 Trunk', price:75, type:'damage', recipe:{'Door':1} },
-        { id:'dm-tire',   name:'🛞 Tire',   price:25,  type:'damage', recipe:{'Tires':1} },
+        {
+          id:'dm-window', name:'Window', price:40, type:'damage',
+          variants:{
+            'Glass only': {'Glass':1},
+            'Glass + Scrap': {'Glass':1,'Scrap':1}
+          },
+          defaultVariant:'Glass only'
+        },
+        {
+          id:'dm-door',   name:'Door',   price:75, type:'damage',
+          variants:{
+            'Replace (Door part)': {'Door':1},
+            'Fabricate (Steel+Scrap)': {'Steel':2,'Scrap':2}
+          },
+          defaultVariant:'Replace (Door part)'
+        },
+        {
+          id:'dm-hood',   name:'Hood (counts as Door)', price:75, type:'damage',
+          variants:{
+            'Replace (Door part)': {'Door':1},
+            'Fabricate (Steel+Scrap)': {'Steel':2,'Scrap':2}
+          },
+          defaultVariant:'Replace (Door part)'
+        },
+        {
+          id:'dm-trunk',  name:'Trunk (counts as Door)', price:75, type:'damage',
+          variants:{
+            'Replace (Door part)': {'Door':1},
+            'Fabricate (Steel+Scrap)': {'Steel':2,'Scrap':2}
+          },
+          defaultVariant:'Replace (Door part)'
+        },
+        {
+          id:'dm-tire',   name:'Wheel / Tire', price:25, type:'damage',
+          variants:{
+            'Tire only': {'Tires':1},
+            'Tire + Scrap': {'Tires':1,'Scrap':1}
+          },
+          defaultVariant:'Tire only'
+        },
       ],
       materials: [
-        { id:'mat-scrap',   name:'🔩 Scrap',      price:75,  type:'material', recipe:{'Scrap':1} },
-        { id:'mat-alum',    name:'🧱 Aluminum',   price:100, type:'material', recipe:{'Aluminum':1} },
-        { id:'mat-steel',   name:'🔧 Steel',      price:125, type:'material', recipe:{'Steel':1} },
-        { id:'shop-repair', name:'🧰 Repair Kit', price:600, type:'material', recipe:{'Repair Kit':1} },
-        { id:'shop-oil',    name:'🛢️ Motor Oil', price:500, type:'material', recipe:{'Motor Oil':1} },
+        { id:'mat-glass',   name:'Glass',      price:40,  type:'material', recipe:{'Glass':1} },
+        { id:'mat-scrap',   name:'Scrap',      price:75,  type:'material', recipe:{'Scrap':1} },
+        { id:'mat-alum',    name:'Aluminum',   price:100, type:'material', recipe:{'Aluminum':1} },
+        { id:'mat-steel',   name:'Steel',      price:125, type:'material', recipe:{'Steel':1} },
+        { id:'mat-door',    name:'Door',price:75,  type:'material', recipe:{'Door':1} },
+        { id:'mat-tires',   name:'Tires',      price:25,  type:'material', recipe:{'Tires':1} },
+        { id:'shop-repair', name:'Repair Kit', price:600, type:'material', recipe:{'Repair Kit':1} },
+        { id:'shop-oil',    name:'Motor Oil',  price:500, type:'material', recipe:{'Motor Oil':1} },
       ]
     };
-    const RECIPE_MAP = Object.fromEntries(
-      [...MENU.damage, ...MENU.materials].map(x => [x.id, x.recipe||{}])
-    );
+
+    // Build RECIPE_MAP from chosen variant when items are added.
     const currency = n => `$${n.toFixed(2)}`;
 
     // ---------- State ----------
-    const STATE_KEY = 'mpm_state_v2_orange';
-    const HIST_KEY  = 'mpm_history_v2_orange';
+    const STATE_KEY = 'mpm_state_v3_themefix';
+    const HIST_KEY  = 'mpm_history_v3_themefix';
     const state = { cart:[], discountPct:0, history:[] };
+
     try{
       const s = JSON.parse(localStorage.getItem(STATE_KEY)||'{}');
       const h = JSON.parse(localStorage.getItem(HIST_KEY)||'[]');
@@ -244,13 +297,36 @@
       if(s){
         if(Array.isArray(s.cart)) state.cart = s.cart;
         if(typeof s.discountPct==='number') state.discountPct = s.discountPct;
+        if(typeof s.theme==='string') applyTheme(s.theme, true);
       }
     }catch{}
     const persist = () => localStorage.setItem(STATE_KEY, JSON.stringify(state));
     const persistHistory = () => localStorage.setItem(HIST_KEY, JSON.stringify(state.history));
 
     // ---------- Cards ----------
-    function cardHTML(item){
+    function damageCardHTML(item){
+      const opts = Object.keys(item.variants||{});
+      return `
+        <article class="card">
+          <h3>${item.name}</h3>
+          <div class="optrow">
+            <label class="small">Repair method</label>
+            <select data-variant="${item.id}">
+              ${opts.map(o=>`<option value="${o}" ${o===item.defaultVariant?'selected':''}>${o}</option>`).join('')}
+            </select>
+          </div>
+          <div class="toolrow" style="justify-content:space-between;">
+            <span class="price">${currency(item.price)}</span>
+            <div class="qty">
+              <button aria-label="decrease">−</button>
+              <output>1</output>
+              <button aria-label="increase">+</button>
+            </div>
+          </div>
+          <button class="btn" data-add="${item.id}" data-kind="damage">Add</button>
+        </article>`;
+    }
+    function materialCardHTML(item){
       return `
         <article class="card">
           <h3>${item.name}</h3>
@@ -262,26 +338,39 @@
               <button aria-label="increase">+</button>
             </div>
           </div>
-          <button class="btn" data-add="${item.id}">Add</button>
+          <button class="btn" data-add="${item.id}" data-kind="material">Add</button>
         </article>`;
     }
-    function renderCards(){
-      const damage = document.getElementById('damage');
-      const materials = document.getElementById('materials');
-      const make = arr => arr.map(cardHTML).join('');
-      damage.innerHTML = make(MENU.damage);
-      materials.innerHTML = make(MENU.materials);
 
-      const all = [...MENU.damage, ...MENU.materials];
+    function renderCards(){
+      const dWrap = document.getElementById('damage');
+      const mWrap = document.getElementById('materials');
+      dWrap.innerHTML = MENU.damage.map(damageCardHTML).join('');
+      mWrap.innerHTML = MENU.materials.map(materialCardHTML).join('');
+
+      // Attach handlers
       document.querySelectorAll('.cards .card').forEach(card=>{
         let count=1;
         const out=card.querySelector('output');
-        card.querySelector('button[aria-label="decrease"]').addEventListener('click',()=>{count=Math.max(1,count-1);out.value=count;});
-        card.querySelector('button[aria-label="increase"]').addEventListener('click',()=>{count++;out.value=count;});
-        const addId = card.querySelector('[data-add]').getAttribute('data-add');
-        const item = all.find(i=>i.id===addId);
-        card.querySelector('[data-add]').addEventListener('click',()=>{
-          addToCart({ id:item.id, name:item.name, unitPrice:item.price, qty:count, type:item.type });
+        const dec=card.querySelector('button[aria-label="decrease"]');
+        const inc=card.querySelector('button[aria-label="increase"]');
+        dec?.addEventListener('click',()=>{count=Math.max(1,count-1);out.value=count;});
+        inc?.addEventListener('click',()=>{count++;out.value=count;});
+
+        const addBtn = card.querySelector('[data-add]');
+        addBtn?.addEventListener('click',()=>{
+          const id = addBtn.getAttribute('data-add');
+          const kind = addBtn.getAttribute('data-kind');
+          if(kind==='damage'){
+            const item = MENU.damage.find(i=>i.id===id);
+            const sel = card.querySelector(`[data-variant="${id}"]`);
+            const variant = sel?.value || item.defaultVariant;
+            const recipe = item.variants[variant];
+            addToCart({ id:item.id, name:`${item.name} — ${variant}`, unitPrice:item.price, qty:count, type:item.type, recipe });
+          }else{
+            const item = MENU.materials.find(i=>i.id===id);
+            addToCart({ id:item.id, name:item.name, unitPrice:item.price, qty:count, type:item.type, recipe:item.recipe });
+          }
         });
       });
     }
@@ -315,9 +404,11 @@
         const i=+b.getAttribute('data-dec'); state.cart[i].qty--; if(state.cart[i].qty<=0) state.cart.splice(i,1); persist(); renderCart(); renderTotals(); renderIngredients();
       }));
     }
+
     function addToCart(line){
-      const key = `${line.id||line.name}|${line.unitPrice}|${line.type||''}`;
-      const found = state.cart.find(l => `${l.id||l.name}|${l.unitPrice}|${l.type||''}`===key);
+      // Merge only if same id + same unit + same variant label
+      const key = `${line.id}|${line.unitPrice}|${line.name}`;
+      const found = state.cart.find(l => `${l.id}|${l.unitPrice}|${l.name}`===key);
       if(found) found.qty += line.qty; else state.cart.push(line);
       persist(); renderCart(); renderTotals(); renderIngredients();
     }
@@ -373,7 +464,7 @@
       list.querySelectorAll('[data-reorder]').forEach(btn=>btn.addEventListener('click',()=>{
         const id=+btn.getAttribute('data-reorder');
         const h=state.history.find(x=>x.id===id); if(!h) return;
-        h.items.forEach(it => addToCart({ id:it.id||null, name:it.name, unitPrice:it.unit, qty:it.qty, type:it.type||'material' }));
+        h.items.forEach(it => addToCart({ id:it.id||null, name:it.name, unitPrice:it.unit, qty:it.qty, type:it.type||'material', recipe:it.recipe||{} }));
       }));
       list.querySelectorAll('[data-delete]').forEach(btn=>btn.addEventListener('click',()=>{
         const id=+btn.getAttribute('data-delete');
@@ -396,10 +487,12 @@
 
     // ---------- Materials aggregation ----------
     function aggregateIngredients(){
-      const tally={}; const add=(n,x=1)=>{ if(!n) return; tally[n]=(tally[n]||0)+x; };
+      const tally={};
+      const add=(n,x=1)=>{ if(!n) return; tally[n]=(tally[n]||0)+x; };
+
       state.cart.forEach(line=>{
-        const rec = RECIPE_MAP[line.id] || {};
-        for(const [ing,c] of Object.entries(rec)) add(ing, c*line.qty);
+        const recipe = line.recipe || {};
+        for(const [ing,c] of Object.entries(recipe)) add(ing, c*line.qty);
       });
       return tally;
     }
@@ -431,7 +524,7 @@
       const total=+(subtotal-manual).toFixed(2);
       const entry={
         id:Date.now(),
-        items:state.cart.map(l=>({ id:l.id||null,name:l.name,qty:l.qty,unit:l.unitPrice,type:l.type||'material',lineTotal:+(l.unitPrice*l.qty).toFixed(2) })),
+        items:state.cart.map(l=>({ id:l.id||null,name:l.name,qty:l.qty,unit:l.unitPrice,type:l.type||'material',lineTotal:+(l.unitPrice*l.qty).toFixed(2),recipe:l.recipe||{} })),
         discountPct:state.discountPct, subtotal:+subtotal.toFixed(2), total
       };
       state.history.unshift(entry); persistHistory();
@@ -446,11 +539,20 @@
 
     // ---------- Theme ----------
     const themeBtn=document.getElementById('themeBtn');
-    function applyTheme(){
-      // Single dark theme
-      themeBtn.classList.toggle('pulse');
+    function applyTheme(theme, initial=false){
+      const root=document.documentElement;
+      const t = theme || localStorage.getItem('mpm_theme') || 'light';
+      root.setAttribute('data-theme', t==='dark' ? 'dark' : 'light');
+      if(!initial){ localStorage.setItem('mpm_theme', t); state.theme=t; persist(); }
+      themeBtn.setAttribute('aria-pressed', t==='dark');
+      themeBtn.textContent = t==='dark' ? '☀️ Light' : '🌓 Dark';
     }
-    themeBtn.addEventListener('click',applyTheme);
+    themeBtn.addEventListener('click',()=>{
+      const current=document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light';
+      applyTheme(current==='dark'?'light':'dark');
+    });
+    // initialize theme
+    applyTheme(localStorage.getItem('mpm_theme')||'light', true);
 
     // ---------- Init ----------
     function renderAll(){ renderCards(); renderCart(); renderTotals(); renderDiscount(); renderHistory(); }
