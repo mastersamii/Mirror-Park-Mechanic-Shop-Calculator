@@ -17,7 +17,7 @@
       --accent:#f59e0b;             /* soft orange */
       --accent-2:#f0a43a;           /* slightly deeper orange */
       --radius:16px;
-      --shadow:0 10px 30px rgba(0,0,0,.08);
+      --shadow:0 4px 10px rgba(0,0,0,.06);  /* softer base shadow */
     }
     [data-theme="dark"]{
       --bg:#0e1218;
@@ -29,6 +29,7 @@
       --muted:#a4afbe;
       --accent:#f59e0b;   /* same soft orange */
       --accent-2:#f0a43a;
+      --shadow:0 4px 10px rgba(0,0,0,.4);  /* stronger dark glow */
     }
 
     *{box-sizing:border-box}
@@ -44,26 +45,52 @@
     .brand h1{font-size:1.4rem;letter-spacing:.2px}
     .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:20px}
     @media (max-width:980px){.grid{grid-template-columns:1fr}}
-    .panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius)}
+    
+    /* --- 🔥 Glow + Hover Effects Added Here --- */
+    .panel,
+    .card,
+    .btn {
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      transition:transform .15s ease, box-shadow .15s ease;
+    }
+    .panel:hover,
+    .card:hover {
+      transform:translateY(-2px);
+      box-shadow:0 6px 16px rgba(0,0,0,.12);
+    }
+    .btn:hover {
+      transform:translateY(-1px);
+      box-shadow:0 4px 12px rgba(0,0,0,.15);
+    }
+    [data-theme="dark"] .panel:hover,
+    [data-theme="dark"] .card:hover {
+      box-shadow:0 6px 18px rgba(0,0,0,.6);
+    }
+    [data-theme="dark"] .btn:hover {
+      box-shadow:0 4px 14px rgba(0,0,0,.6);
+    }
+    /* --- End Glow Section --- */
+
     .panel h2{padding:16px 18px;border-bottom:1px solid var(--border);font-size:1rem}
     .content{padding:16px}
     .section{margin-bottom:16px}
     .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px}
     .card h3{font-size:1rem}
     .price{color:var(--accent);font-weight:800}
     .muted{color:var(--muted);font-size:.9rem}
     .qty{display:grid;grid-template-columns:32px 1fr 32px;align-items:center;gap:8px;margin-top:6px}
     .qty button{height:36px;border-radius:10px;border:1px solid var(--border);background:var(--chip);color:var(--ink);cursor:pointer;font-size:18px}
     .qty output{text-align:center}
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--chip);color:var(--ink);cursor:pointer;font-weight:600;text-decoration:none}
     .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));border:none;color:#111827}
     .btn.block{width:100%}
     .btn.ghost{background:transparent}
     .toolrow{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
     .chip{padding:6px 10px;border-radius:999px;background:var(--chip);border:1px solid var(--border);color:var(--muted);font-weight:700;font-size:.85rem}
     .divider{height:1px;background:var(--border);margin:8px 0}
-    .order-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:6px}
+    .order-card{padding:6px}
     .cart-item{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:8px;border-bottom:1px dashed var(--border)}
     .cart-item:last-child{border-bottom:none}
     .small{font-size:.85rem;color:var(--muted)}
@@ -78,6 +105,7 @@
   </style>
 </head>
 <body>
+
   <div class="container">
     <header>
       <div class="brand">
