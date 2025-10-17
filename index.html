@@ -31,7 +31,7 @@
       --border:#273244;
       --ink:#e7edf6;
       --muted:#a4afbe;
-      --accent:#f59e0b;   /* same soft orange */
+      --accent:#f59e0b;
       --accent-2:#f0a43a;
     }
 
@@ -145,7 +145,6 @@
             <button class="btn" data-tab="summary" aria-selected="true">🧾 Summary</button>
             <button class="btn" data-tab="history" aria-selected="false">📜 History</button>
             <button class="btn" data-tab="ingredients" aria-selected="false">🧺 Materials List</button>
-            <!-- NEW TAB BUTTON -->
             <button class="btn" data-tab="buy" aria-selected="false">💵 Buy Materials</button>
           </div>
 
@@ -201,7 +200,7 @@
             </div>
           </div>
 
-          <!-- NEW: BUY MATERIALS TAB -->
+          <!-- BUY MATERIALS TAB -->
           <div id="tab-buy" role="tabpanel" hidden>
             <div class="small muted" style="margin-bottom:6px;">
               Enter how many units a seller brings you. Payouts use your shop buy rates.
@@ -221,8 +220,6 @@
               <button class="btn ghost" id="clearBuyBtn">Clear</button>
             </div>
           </div>
-          <!-- END BUY TAB -->
-
         </div>
       </aside>
     </div>
@@ -230,7 +227,6 @@
 
   <script>
     // ---------- Data ----------
-    // Pricing and recipes per your rules (SELL TO CUSTOMER)
     const MENU = {
       damage: [
         { id:'dm-window', name:'💥Window', price:40,  type:'damage', recipe:{'Glass':1} },
@@ -271,7 +267,6 @@
     const STATE_KEY = 'mpm_state_orangegrey_v3';
     const HIST_KEY  = 'mpm_history_orangegrey_v3';
 
-    // Default state + load
     const state = {
       cart:[],
       discountPct:0,
@@ -292,7 +287,6 @@
       }
     }catch{}
 
-    // Ensure buy keys exist
     BUY_RATES.forEach(r => { if(typeof state.buy[r.key]!=='number') state.buy[r.key]=0; });
 
     const persist = () => localStorage.setItem(STATE_KEY, JSON.stringify(state));
@@ -512,48 +506,42 @@
     });
 
     // ---------- Buy Materials (NEW) ----------
-function renderBuyTab(){
-  const wrap = document.getElementById('buyRows');
-  // Build rows
-  wrap.innerHTML = `
-    <div class="buy-row small muted" style="font-weight:700;">
-      <div>Material</div><div class="right">Unit</div><div class="right">Qty</div><div class="right">Line</div>
-    </div>
-    ${BUY_RATES.map(r=>`
-      <div class="buy-row" data-key="${r.key}">
-        <div><strong>${r.icon} ${r.key}</strong></div>
-        <div class="right">${currency(r.unit)}</div>
-        <div><input class="buy-input" type="number" min="0" step="1" inputmode="numeric" value="${state.buy[r.key]||0}" aria-label="${r.key} quantity"></div>
-        <div class="right"><strong class="lineTotal">$0.00</strong></div>
-      </div>
-    `).join('')}
-  `;
+    function renderBuyTab(){
+      const wrap = document.getElementById('buyRows');
 
-  wrap.querySelectorAll('.buy-row[data-key]').forEach(row=>{
-    const key = row.getAttribute('data-key');
-    const input = row.querySelector('input.buy-input');
-    const line = row.querySelector('.lineTotal');
-    const unit = BUY_RATES.find(x=>x.key===key)?.unit || 0;
+      // Build rows
+      wrap.innerHTML = `
+        <div class="buy-row small muted" style="font-weight:700;">
+          <div>Material</div><div class="right">Unit</div><div class="right">Qty</div><div class="right">Line</div>
+        </div>
+        ${BUY_RATES.map(r=>`
+          <div class="buy-row" data-key="${r.key}">
+            <div><strong>${r.icon} ${r.key}</strong></div>
+            <div class="right">${currency(r.unit)}</div>
+            <div><input class="buy-input" type="number" min="0" step="1" inputmode="numeric" value="${state.buy[r.key]||0}" aria-label="${r.key} quantity"></div>
+            <div class="right"><strong class="lineTotal">$0.00</strong></div>
+          </div>
+        `).join('')}
+      `;
 
-    const recalc = ()=>{
-      const qty = Math.max(0, parseInt(input.value || '0', 10));
-      state.buy[key] = qty;
-      persist();
-      line.textContent = currency(qty * unit);
-      renderBuyTotals();
-    };
+      // Hook inputs (skip header)
+      wrap.querySelectorAll('.buy-row[data-key]').forEach(row=>{
+        const key   = row.getAttribute('data-key');
+        const input = row.querySelector('input.buy-input');
+        const line  = row.querySelector('.lineTotal');
+        const unit  = BUY_RATES.find(x=>x.key===key)?.unit || 0;
 
-    input.addEventListener('input', recalc);
-    input.addEventListener('change', recalc);
-    recalc(); // initialize each line
-  });
+        const recalc = ()=>{
+          const qty = Math.max(0, parseInt(input.value || '0', 10));
+          state.buy[key] = qty;
+          persist();
+          line.textContent = currency(qty * unit);
+          renderBuyTotals();
+        };
 
-  renderBuyTotals();
-}
-;
-        input.addEventListener('input',recalc);
-        // initialize line
-        recalc();
+        input.addEventListener('input', recalc);
+        input.addEventListener('change', recalc);
+        recalc(); // init each line
       });
 
       // Buttons
@@ -576,6 +564,9 @@ function renderBuyTab(){
         const txt = (lines.length? lines.join('\n')+'\n':'')+`Total to Pay: ${grand}`;
         navigator.clipboard.writeText(txt).then(()=>alert('Payout breakdown copied!'));
       });
+
+      // Ensure totals render even if all qty are zero
+      renderBuyTotals();
     }
 
     function calcBuySubtotal(){
@@ -584,7 +575,7 @@ function renderBuyTab(){
     function renderBuyTotals(){
       const sub = calcBuySubtotal();
       document.getElementById('buySubtotal').textContent = currency(sub);
-      document.getElementById('buyTotal').textContent = currency(sub);
+      document.getElementById('buyTotal').textContent    = currency(sub);
     }
 
     // ---------- Init ----------
